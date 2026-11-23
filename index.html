@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adhitya Ramesh</title>
+<meta name="description" content="Adhitya Ramesh, Business Systems Analyst at PayPal (Chennai): fintech data, root-cause analysis, UAT sign-off and data governance, moving into product ownership.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column (max 1080px) with a two-column hero; the hero's right side is a
+   mono "trace" of the analysis-to-sign-off lifecycle, the one place the design is bold. */
+:root {
+  --bg: #F3F6F7;
+  --surface: #FFFFFF;
+  --ink: #0F1B24;
+  --muted: #586973;
+  --line: #D6DEE2;
+  --accent: #0B7466;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DDEFEC;
+  --signal: #9A6412;
+  --signal-soft: #F6EAD4;
+  --code: #EAF0F2;
+  --display: "Schibsted Grotesk", "Segoe UI", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  --step--1: 0.84rem; --step-0: 1rem; --step-1: 1.2rem; --step-2: 1.55rem; --step-3: 2.1rem; --step-4: clamp(2.2rem, 5vw, 3.4rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1318; --surface: #111C23; --ink: #E2E9ED; --muted: #94A5AF; --line: #22323C;
+    --accent: #3BC3B0; --accent-ink: #052019; --accent-soft: #10302C; --signal: #E3B25C; --signal-soft: #33280F; --code: #0F1A20;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1318; --surface: #111C23; --ink: #E2E9ED; --muted: #94A5AF; --line: #22323C;
+  --accent: #3BC3B0; --accent-ink: #052019; --accent-soft: #10302C; --signal: #E3B25C; --signal-soft: #33280F; --code: #0F1A20;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; } img { max-width: 100%; }
+body { background: var(--bg); color: var(--ink); font: 400 var(--step-0)/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+p { margin: 0; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.label { font: 500 var(--step--1)/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+/* Header */
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.brand { font: 700 1.05rem/1 var(--display); color: var(--ink); text-decoration: none; }
+.brand span { color: var(--accent); }
+nav ul { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+nav a { color: var(--muted); text-decoration: none; font-size: var(--step--1); font-weight: 500; }
+nav a:hover { color: var(--ink); }
+@media (max-width: 760px) { nav { display: none; } }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 8px; font: 600 0.95rem/1 var(--body); cursor: pointer; text-decoration: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); transition: background 160ms ease, border-color 160ms ease, transform 160ms ease; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { transform: translateY(-1px); }
+.btn svg { width: 18px; height: 18px; flex: none; }
+
+/* Hero */
+.hero .wrap { display: grid; grid-template-columns: 1.15fr 1fr; gap: 48px; align-items: center; padding-block: 64px 56px; }
+.hero h1 { font-size: var(--step-4); font-weight: 800; margin-block: 14px 18px; }
+.hero .lede { font-size: var(--step-1); color: var(--muted); max-width: 58ch; }
+.hero .lede strong { color: var(--ink); font-weight: 600; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.status { display: inline-flex; align-items: center; gap: 8px; font: 500 var(--step--1)/1 var(--mono); color: var(--accent); background: var(--accent-soft); padding: 7px 12px; border-radius: 999px; }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.trace { background: var(--code); border: 1px solid var(--line); border-radius: 12px; padding: 22px 22px 18px; font-family: var(--mono); font-size: 0.86rem; min-width: 0; }
+.trace header { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px dashed var(--line); margin-bottom: 8px; }
+.trace ol { list-style: none; margin: 0; padding: 0; display: grid; }
+.trace li { display: grid; grid-template-columns: 2.2em 1fr; gap: 6px 10px; padding: 11px 0; border-bottom: 1px dashed var(--line); }
+.trace li:last-child { border-bottom: 0; }
+.trace .n { color: var(--accent); font-weight: 500; }
+.trace b { color: var(--ink); font-weight: 500; }
+.trace span { grid-column: 2; color: var(--muted); font-family: var(--body); font-size: 0.86rem; line-height: 1.45; }
+.trace li.done .n::after { content: " ✓"; }
+@media (max-width: 860px) { .hero .wrap { grid-template-columns: 1fr; gap: 32px; padding-block: 40px; } }
+
+/* Sections */
+section { padding-block: 56px; border-top: 1px solid var(--line); }
+.head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 28px; }
+.head h2 { font-size: var(--step-3); font-weight: 700; }
+.head p { color: var(--muted); max-width: 60ch; }
+
+/* Work cases */
+.cases { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+.case { padding: 24px 24px 26px 0; border-bottom: 1px solid var(--line); display: grid; gap: 10px; align-content: start; min-width: 0; }
+.case:nth-child(even) { padding: 24px 0 26px 24px; border-left: 1px solid var(--line); }
+.case h3 { font-size: var(--step-1); font-weight: 700; }
+.case p { color: var(--muted); }
+.case .role { font-size: var(--step--1); color: var(--ink); }
+.case .role em { font-style: normal; font-family: var(--mono); color: var(--accent); margin-right: 6px; }
+@media (max-width: 760px) { .cases { grid-template-columns: 1fr; } .case, .case:nth-child(even) { padding: 22px 0; border-left: 0; } }
+
+/* Projects */
+.feature { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 32px; margin-bottom: 20px; }
+.feature h3 { font-size: var(--step-2); font-weight: 800; margin-block: 8px 12px; }
+.feature p { color: var(--muted); }
+.feature ul { margin: 16px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.agents { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.agent { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--bg); }
+.agent b { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--accent); }
+.agent p { font-size: 0.92rem; margin-top: 4px; }
+.flow { font: 500 0.8rem/1.5 var(--mono); color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.tag { font: 500 0.75rem/1 var(--mono); padding: 6px 8px; border-radius: 6px; background: var(--code); color: var(--muted); }
+@media (max-width: 860px) { .feature { grid-template-columns: 1fr; padding: 22px; } }
+.minor { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.minor article { padding: 20px; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.minor h3 { font-size: 1.05rem; font-weight: 700; }
+.minor p { color: var(--muted); font-size: 0.94rem; }
+@media (max-width: 860px) { .minor { grid-template-columns: 1fr; } }
+
+/* Building now */
+.build { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.build article { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.build h3 { font-size: 1.05rem; font-weight: 700; }
+.build p { color: var(--muted); font-size: 0.93rem; }
+.pill { justify-self: start; font: 500 0.72rem/1 var(--mono); letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 9px; border-radius: 999px; background: var(--signal-soft); color: var(--signal); }
+.note { margin-top: 18px; color: var(--muted); font-size: var(--step--1); }
+
+/* Experience */
+.timeline { display: grid; gap: 0; }
+.job { display: grid; grid-template-columns: 180px 1fr; gap: 8px 32px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.job:first-child { padding-top: 0; }
+.job .when { font: 500 var(--step--1)/1.5 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.job h3 { font-size: var(--step-1); font-weight: 700; }
+.job .org { color: var(--muted); margin-top: 2px; }
+.job ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.job li { max-width: 70ch; }
+@media (max-width: 680px) { .job { grid-template-columns: 1fr; } }
+
+/* Skills + education */
+.two { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; }
+.skills { display: grid; gap: 18px; }
+.skills div { display: grid; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 0.88rem; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.edu { display: grid; gap: 16px; align-content: start; }
+.edu div { display: grid; gap: 2px; }
+.edu b { font-weight: 600; }
+.edu small { color: var(--muted); font-size: 0.9rem; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+
+/* Contact */
+.contact { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 32px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: center; }
+.contact h2 { font-size: var(--step-3); }
+.contact p { color: var(--muted); margin-top: 10px; }
+.contact .actions { display: grid; gap: 12px; }
+.email { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono); font-size: 0.95rem; }
+.email code { padding: 10px 12px; background: var(--code); border-radius: 8px; user-select: all; word-break: break-all; }
+.toast { font: 500 0.8rem/1 var(--mono); color: var(--accent); min-height: 1em; }
+@media (max-width: 760px) { .contact { grid-template-columns: 1fr; padding: 22px; } }
+footer { padding-block: 28px 40px; color: var(--muted); font-size: var(--step--1); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+
+
+/* ---- Motion layer ---- */
+.progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; height: 3px; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--accent); z-index: 20; }
+.hero { position: relative; overflow: hidden; }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.hero .wrap { position: relative; }
+.hero h1 .w { display: inline-block; }
+.motion .hero h1 .w { animation: wordrise 700ms cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * 45ms); }
+@keyframes wordrise { from { transform: translateY(0.35em); } to { transform: none; } }
+.trace li { cursor: pointer; border-radius: 8px; padding-inline: 8px; margin-inline: -8px; transition: background 200ms ease; }
+.trace li:hover, .trace li:focus-visible { background: color-mix(in srgb, var(--accent) 7%, transparent); outline: none; }
+.trace li.active { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.trace .meter { height: 3px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 12px; }
+.trace .meter i { display: block; height: 100%; width: 20%; background: var(--accent); transition: width 500ms cubic-bezier(.2,.7,.2,1); }
+.trace .detail { margin-top: 12px; padding: 12px 14px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); font-family: var(--body); font-size: 0.88rem; line-height: 1.5; color: var(--muted); min-height: 5.4em; }
+.trace .detail b { display: block; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; font-weight: 500; }
+.trace .hint { text-transform: none; letter-spacing: 0; }
+.stats { border-top: 1px solid var(--line); padding-block: 28px; }
+.stats .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+.stat { display: grid; gap: 4px; align-content: start; }
+.stat b { font: 800 clamp(1.8rem, 4vw, 2.5rem)/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.stat b small { font-size: 0.55em; color: var(--accent); margin-left: 2px; }
+.stat span { color: var(--muted); font-size: 0.9rem; }
+@media (max-width: 760px) { .stats .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.motion [data-reveal] { transform: translateY(16px); transition: transform 700ms cubic-bezier(.2,.7,.2,1); }
+.motion [data-reveal].in { transform: none; }
+.spot { background-image: radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%); transition: border-color 200ms ease, transform 200ms ease; }
+.spot:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.motion .minor article.spot.in:hover, .motion .build article.spot.in:hover { transform: translateY(-3px); }
+.pipe { width: 100%; height: auto; margin-top: 4px; }
+.pipe text { font: 500 11px var(--mono); fill: var(--muted); }
+.pipe .node { fill: var(--surface); stroke: var(--line); stroke-width: 2; }
+.pipe .node.hot { stroke: var(--accent); }
+.pipe .link { stroke: var(--line); stroke-width: 2; fill: none; }
+.pipe .flowline { stroke: var(--accent); stroke-width: 2; fill: none; stroke-dasharray: 4 10; }
+.motion .pipe .flowline { animation: dash 1.4s linear infinite; }
+@keyframes dash { to { stroke-dashoffset: -28; } }
+.pipe .pkt { fill: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .progress { display: none; } .pipe .pkt { display: none; } }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 32px 0 16px; }
+.fchip { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font: 500 0.88rem/1 var(--body); cursor: pointer; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; }
+.fchip span { font-family: var(--mono); font-size: 0.75rem; margin-left: 4px; opacity: 0.8; }
+.fchip:hover { border-color: var(--accent); color: var(--ink); }
+.fchip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.minor article .links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 4px; }
+.minor article .links a { display: inline-flex; align-items: center; gap: 6px; font: 500 0.85rem/1 var(--body); text-decoration: none; min-height: 32px; }
+.minor article .links a:hover { text-decoration: underline; }
+.minor article .links svg { width: 16px; height: 16px; }
+.motion .minor article.pop { animation: pop 380ms cubic-bezier(.2,.7,.2,1) both; }
+@keyframes pop { from { transform: translateY(10px) scale(0.985); } to { transform: none; } }
+@media (max-width: 1000px) and (min-width: 861px) { .minor { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">Adhitya Ramesh<span>.</span></a>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#building">Building now</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <a class="btn" href="Adhitya_Ramesh_Resume.pdf" target="_blank" rel="noopener" data-resume aria-label="Download resume (PDF)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+      Resume
+    </a>
+  </div>
+</header>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+<main id="top">
+  <div class="hero">
+    <canvas id="flow" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div>
+        <span class="status"><i></i>Open to Product Owner, BSA and Business Analyst roles</span>
+        <h1>I find where a business problem starts, and stay with it until the fix ships.</h1>
+        <p class="lede"><strong>Business Systems Analyst at PayPal, Chennai.</strong> 4+ years across fintech data, analytics consulting for Roche at ZS, and systems engineering at Western Digital. I own the analysis-to-sign-off lifecycle for engineering changes and I'm moving into product ownership for fintech risk and data platforms.</p>
+        <div class="cta">
+          <a class="btn primary" href="Adhitya_Ramesh_Resume.pdf" target="_blank" rel="noopener" data-resume>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+            Download resume
+          </a>
+          <a class="btn" href="https://www.linkedin.com/in/adhitya-ramesh-a96914144" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4v11H3v-11Zm6.5 0h3.8v1.5h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1v5.46h-4v-4.84c0-1.15-.02-2.64-1.6-2.64-1.62 0-1.86 1.26-1.86 2.56v4.92h-4v-11Z"/></svg>
+            LinkedIn
+          </a>
+          <a class="btn" href="https://github.com/adhuss17895" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>GitHub</a>
+        </div>
+      </div>
+      <aside class="trace" aria-label="How I take an engineering change from issue to release">
+        <header><span>analysis → sign-off</span><span class="hint">tap a step</span></header>
+        <ol>
+          <li class="done"><b class="n">01</b><b>Diagnose</b><span>Find the root cause of a business issue and where it originates.</span></li>
+          <li class="done"><b class="n">02</b><b>Specify</b><span>Document the change in BRDs and FRDs: what changes, and where in the code repository.</span></li>
+          <li class="done"><b class="n">03</b><b>Assess impact</b><span>Trace downstream systems, reports and teams the change will touch.</span></li>
+          <li class="done"><b class="n">04</b><b>Validate</b><span>Review UAT test cases and results against acceptance criteria.</span></li>
+          <li class="done"><b class="n">05</b><b>Sign off</b><span>Give release sign-off, then report status and risk to leadership.</span></li>
+        </ol>
+        <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+        <p class="detail" id="detail" aria-live="polite"><b>01 · Diagnose</b>Example: a long-running gap in customer-interaction data. I traced it back to the source system where the data was lost.</p>
+      </aside>
+    </div>
+  </div>
+
+  <div class="stats" aria-label="Career in numbers">
+    <div class="wrap">
+      <div class="stat" data-reveal><b><span data-count="4">4</span><small>+</small></b><span>years across fintech, consulting and engineering</span></div>
+      <div class="stat" data-reveal><b><span data-count="150">150</span><small>+</small></b><span>affiliates covered by my Roche reporting at ZS</span></div>
+      <div class="stat" data-reveal><b><small>~</small><span data-count="1.5" data-dec="1">1.5</span><small>yrs</small></b><span>of records restored after a root-cause analysis</span></div>
+      <div class="stat" data-reveal><b><span data-count="25">25</span><small>%</small></b><span>lift in regional campaign engagement</span></div>
+    </div>
+  </div>
+
+  <section id="work">
+    <div class="wrap">
+      <div class="head">
+        <h2>Selected work at PayPal</h2>
+        <p>Described at a level that keeps internal details private. Happy to go deeper in an interview.</p>
+      </div>
+      <div class="cases">
+        <article class="case" data-reveal>
+          <span class="label">Data quality</span>
+          <h3>A long-running gap in customer-interaction data</h3>
+          <p>Led the root-cause analysis, identified the source-system cause and recommended a lower-effort reprocessing approach that restored about 1.5 years of records.</p>
+          <p class="role"><em>my part</em>Diagnosis and the fix design; the owning team executed it.</p>
+        </article>
+        <article class="case" data-reveal>
+          <span class="label">Program delivery</span>
+          <h3>Org-wide source-system migration</h3>
+          <p>Own end-to-end status tracking for two workstreams, represent the team in leadership reviews and present weekly progress decks to managers.</p>
+          <p class="role"><em>my part</em>Tracking, risk visibility and leadership reporting.</p>
+        </article>
+        <article class="case" data-reveal>
+          <span class="label">Data platform</span>
+          <h3>Onboarding a new data tenant</h3>
+          <p>Designed the onboarding and pipeline solution to bring a new data tenant into the platform.</p>
+          <p class="role"><em>my part</em>Solution design and requirements.</p>
+        </article>
+        <article class="case" data-reveal>
+          <span class="label">Governance</span>
+          <h3>Approvals for data moving in and out of the organisation</h3>
+          <p>Lead cross-functional approvals for data sharing, including third-party vendor data, with governance, risk and compliance stakeholders.</p>
+          <p class="role"><em>my part</em>Coordination and sign-off readiness.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <div class="head">
+        <h2>Projects I built</h2>
+        <p>An AI-agent product I run, plus analytics and machine-learning projects with public code. Filter by the kind of work you care about.</p>
+      </div>
+
+      <article class="feature spot" data-reveal>
+        <div>
+          <span class="label">Own product · AI agents</span>
+          <h3>Rezmate</h3>
+          <p>A digital product of profession-ready, erase-and-fill resume templates, built and run by me. Three Claude Code agents take a new profession from market research to a ready-to-publish Etsy listing, with my approval required at each checkpoint.</p>
+          <ul>
+            <li>Researches 5–8 real job ads per profession and extracts the 16 keywords that appear in 3 or more.</li>
+            <li>Builds 3 designs, each with 10 documents in PDF and Word, on A4 and US Letter.</li>
+            <li>Runs its own QA before anything ships: page fit in real Microsoft Word, reading order in 3 PDF parsers, and ATS scoring (94–95, grade A).</li>
+          </ul>
+          <div class="tags"><span class="tag">Claude Code</span><span class="tag">Agent memory</span><span class="tag">Human-in-the-loop</span><span class="tag">Python</span><span class="tag">JavaScript</span><span class="tag">QA automation</span></div>
+        </div>
+        <div class="agents">
+          <div class="agent"><b>digital-product-process</b><p>Research → build → Etsy draft → go live, with three approval checkpoints.</p></div>
+          <div class="agent"><b>career-template-designer</b><p>Researches one role and builds its full template pack with ATS checks.</p></div>
+          <div class="agent"><b>etsy-shop-manager</b><p>Looks after the live shop: orders, messages, reviews and listing rules.</p></div>
+          <svg class="pipe" viewBox="0 0 520 74" role="img" aria-label="Rezmate flow: research, build, QA, owner approval, listing">
+            <path class="link" d="M52 30 H468"/>
+            <path class="flowline" d="M52 30 H468"/>
+            <circle class="pkt" r="4" cx="52" cy="30"><animate attributeName="cx" values="52;468" dur="3.2s" repeatCount="indefinite"/></circle>
+            <circle class="node hot" cx="52" cy="30" r="9"/><text x="52" y="62" text-anchor="middle">research</text>
+            <circle class="node" cx="156" cy="30" r="9"/><text x="156" y="62" text-anchor="middle">build</text>
+            <circle class="node" cx="260" cy="30" r="9"/><text x="260" y="62" text-anchor="middle">QA</text>
+            <circle class="node" cx="364" cy="30" r="9"/><text x="364" y="62" text-anchor="middle">approval</text>
+            <circle class="node hot" cx="468" cy="30" r="9"/><text x="468" y="62" text-anchor="middle">listing</text>
+          </svg>
+        </div>
+      </article>
+
+      <div class="filters" role="group" aria-label="Filter projects"><button type="button" class="fchip" data-filter="all" aria-pressed="true">All <span>10</span></button><button type="button" class="fchip" data-filter="biz" aria-pressed="false">Business & KPIs <span>4</span></button><button type="button" class="fchip" data-filter="dash" aria-pressed="false">Dashboards <span>5</span></button><button type="button" class="fchip" data-filter="ml" aria-pressed="false">Machine learning <span>3</span></button><button type="button" class="fchip" data-filter="auto" aria-pressed="false">Automation <span>1</span></button></div>
+      <div class="minor" id="project-grid">
+        <article class="spot" data-reveal data-cat="auto">
+          <span class="label">Automation · 2026</span>
+          <h3>Job-search and resume pipeline</h3>
+          <p>Searches LinkedIn and job boards for 20 target titles, scores fit from each job description, tailors a resume per job from one fact file and ATS-checks every version.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">ATS checks</span><span class="tag">Excel</span></div>
+        </article>
+        <article class="spot" data-reveal data-cat="biz dash">
+          <span class="label">MeriSKILL internship · 2024</span>
+          <h3>Employee attrition analysis</h3>
+          <p>Analysed a client company's steep attrition rate and built a Power BI report on the factors behind it (age, active employees, attrition count), with recommendations to bring it down.</p>
+          <div class="tags"><span class="tag">Power BI</span><span class="tag">SQL</span><span class="tag">Python</span><span class="tag">KPIs</span></div>
+          <div class="links"><a href="https://github.com/adhuss17895/HR-Attrition-Analysis-Report" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4"/></svg>Code</a></div>
+        </article>
+        <article class="spot" data-reveal data-cat="biz dash">
+          <span class="label">PwC Switzerland job simulation · 2024</span>
+          <h3>Power BI KPIs for a client</h3>
+          <p>Worked through a client's reporting needs, defined KPIs and built Power BI dashboards on performance and gender balance, with insights and recommended actions.</p>
+          <div class="tags"><span class="tag">Power BI</span><span class="tag">KPI definition</span><span class="tag">Storytelling</span></div>
+          <div class="links"><a href="https://github.com/adhuss17895/PwC-Digital-Marketing" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4"/></svg>Code</a></div>
+        </article>
+        <article class="spot" data-reveal data-cat="biz dash">
+          <span class="label">Analytics · 2024</span>
+          <h3>Walmart sales analysis, Q1 2019</h3>
+          <p>End-to-end analysis of Walmart sales and product data: custom SQL queries to pull the data, exploratory analysis in Python and a Power BI dashboard of sales metrics.</p>
+          <div class="tags"><span class="tag">SQL</span><span class="tag">Python</span><span class="tag">Power BI</span></div>
+          <div class="links"><a href="https://github.com/adhuss17895/Walmart-Sales-Analytics" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4"/></svg>Code</a></div>
+        </article>
+        <article class="spot" data-reveal data-cat="biz">
+          <span class="label">Analytics · 2024</span>
+          <h3>Digital ad performance</h3>
+          <p>Analysed paid-media data across Google Ads, Facebook and LinkedIn, built a CTR, CPC and ROAS dashboard and a budget plan projected to lift ROAS by 20%.</p>
+          <div class="tags"><span class="tag">SQL</span><span class="tag">Python</span><span class="tag">Power BI</span></div>
+        </article>
+        <article class="spot" data-reveal data-cat="dash">
+          <span class="label">Analytics · 2024</span>
+          <h3>London bike sharing, end to end</h3>
+          <p>Cleaned and analysed a public UK bike-sharing dataset in Python and published a Tableau dashboard of rides, moving averages and the effect of weather and season.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Tableau</span><span class="tag">EDA</span></div>
+          <div class="links"><a href="https://github.com/adhuss17895/LondonBIkeRides_E2E" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4"/></svg>Code</a><a href="https://public.tableau.com/app/profile/adhitya.ramesh/viz/LondonBikeRides_17113734877340/London_Bike_Rides" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6m0-6-9 9M10 6H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/></svg>Live dashboard</a></div>
+        </article>
+        <article class="spot" data-reveal data-cat="dash">
+          <span class="label">Dashboard · 2024</span>
+          <h3>US sales dashboard</h3>
+          <p>Power BI dashboard of total sales and quantity ordered, broken down by city, month and day across the United States, with data prepared in Power Query.</p>
+          <div class="tags"><span class="tag">Power BI</span><span class="tag">Power Query</span></div>
+          <div class="links"><a href="https://github.com/adhuss17895/Sales-Analysis" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4"/></svg>Code</a></div>
+        </article>
+        <article class="spot" data-reveal data-cat="ml">
+          <span class="label">British Airways job simulation (Forage) · 2024</span>
+          <h3>Review sentiment and booking prediction</h3>
+          <p>Scraped and classified customer reviews by sentiment, then modelled which factors drive a successful flight booking, and presented the findings.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">scikit-learn</span><span class="tag">SQL</span></div>
+          <div class="links"><a href="https://github.com/adhuss17895/British-Airways" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4"/></svg>Code</a></div>
+        </article>
+        <article class="spot" data-reveal data-cat="ml">
+          <span class="label">Machine learning · 2023</span>
+          <h3>Used car price prediction</h3>
+          <p>Exploratory analysis and a regression model that predicts used-car prices from brand, model, year and engine size, reaching about 95% accuracy.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">pandas</span><span class="tag">Matplotlib</span></div>
+          <div class="links"><a href="https://github.com/adhuss17895/IBM-Used-Car-Price-Prediction" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4"/></svg>Code</a></div>
+        </article>
+        <article class="spot" data-reveal data-cat="ml">
+          <span class="label">Machine learning · 2023</span>
+          <h3>Housing price prediction</h3>
+          <p>Predictive model of house prices from suburb, council area, bedrooms and floor area, built in R and Python with 84.25% accuracy, visualised in Tableau.</p>
+          <div class="tags"><span class="tag">R</span><span class="tag">Python</span><span class="tag">Tableau</span></div>
+          <div class="links"><a href="https://github.com/adhuss17895/Real-Estate-Housing-Price-Prediction-Analysis" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4"/></svg>Code</a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="building">
+    <div class="wrap">
+      <div class="head">
+        <h2>Building now</h2>
+        <p>Five AI projects I'm building from scratch, each aimed at a problem I meet as a business systems analyst. They're planned work, so no results are claimed yet.</p>
+      </div>
+      <div class="build">
+        <article class="spot" data-reveal><span class="pill">Planned</span><h3>RCA Copilot</h3><p>An agent that takes a data-quality alert, checks lineage and recent changes, and drafts the likely root cause, fix and downstream impact for an analyst to confirm.</p><div class="tags"><span class="tag">Claude API</span><span class="tag">SQL</span><span class="tag">Tool use</span></div></article>
+        <article class="spot" data-reveal><span class="pill">Planned</span><h3>Story-to-UAT</h3><p>Turns user stories and BRDs into acceptance criteria, UAT scenarios and a traceability matrix, scored against an evaluation set.</p><div class="tags"><span class="tag">Structured outputs</span><span class="tag">Evals</span></div></article>
+        <article class="spot" data-reveal><span class="pill">Planned</span><h3>Data-Sharing Policy Assistant</h3><p>Answers "can this vendor receive this data?" from governance policies with cited sources, and drafts the approval checklist.</p><div class="tags"><span class="tag">RAG</span><span class="tag">Vector search</span></div></article>
+        <article class="spot" data-reveal><span class="pill">Planned</span><h3>Payment Anomaly Explainer</h3><p>Flags unusual transactions in a public synthetic payments dataset and explains each flag in plain language for a risk analyst.</p><div class="tags"><span class="tag">scikit-learn</span><span class="tag">Claude API</span></div></article>
+        <article class="spot" data-reveal><span class="pill">Planned</span><h3>Ask the Warehouse</h3><p>Plain-English questions over a fintech data model, answered with SQL, with an evaluation suite that measures answer accuracy.</p><div class="tags"><span class="tag">Text-to-SQL</span><span class="tag">DuckDB</span><span class="tag">Evals</span></div></article>
+      </div>
+      <p class="note">Each project will ship with a public repository, a short demo and a write-up of what worked and what didn't.</p>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="wrap">
+      <div class="head"><h2>Experience</h2></div>
+      <div class="timeline">
+        <article class="job" data-reveal>
+          <span class="when">May 2025 – now</span>
+          <div>
+            <h3>Business Systems Analyst (Data Analyst 2)</h3>
+            <p class="org">PayPal · Consultant via Optimum Infosystem · Chennai</p>
+            <ul>
+              <li>Own the analysis-to-sign-off lifecycle for engineering deliverables in Agile/Scrum sprints, from root cause and BRDs/FRDs to UAT review and release sign-off.</li>
+              <li>Track two workstreams of an org-wide source-system migration and report to leadership weekly.</li>
+              <li>Lead cross-functional approvals for third-party and internal data sharing.</li>
+            </ul>
+          </div>
+        </article>
+        <article class="job" data-reveal>
+          <span class="when">Jun 2024 – May 2025</span>
+          <div>
+            <h3>Data Analyst</h3>
+            <p class="org">ZS Associates · Consultant via Ascendion · Chennai</p>
+            <ul>
+              <li>Built global reporting for Roche across 150+ affiliates in 8+ regions: HCP engagement, consent tracking and territory mapping.</li>
+              <li>Recommendations from campaign analytics lifted regional campaign engagement by 25%.</li>
+            </ul>
+          </div>
+        </article>
+        <article class="job" data-reveal>
+          <span class="when">May 2021 – May 2022</span>
+          <div>
+            <h3>System Validation Engineer</h3>
+            <p class="org">Western Digital · Bengaluru</p>
+            <ul><li>Wrote and ran SSD functional validation test plans and automated measurements with Python.</li></ul>
+          </div>
+        </article>
+        <article class="job" data-reveal>
+          <span class="when">Nov 2018 – Oct 2019</span>
+          <div>
+            <h3>Embedded &amp; Software Engineer</h3>
+            <p class="org">Mythopoeia Holdings · Wicklow, Ireland</p>
+            <ul><li>Built software for aircraft in-flight entertainment systems.</li></ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap two">
+      <div>
+        <div class="head"><h2>Skills</h2></div>
+        <div class="skills">
+          <div><span class="label">Product &amp; analysis</span><div class="chips"><span class="chip">Requirements &amp; root-cause analysis</span><span class="chip">BRD &amp; FRD</span><span class="chip">User stories &amp; acceptance criteria</span><span class="chip">UAT &amp; release sign-off</span><span class="chip">Impact analysis</span><span class="chip">Agile / Scrum</span></div></div>
+          <div><span class="label">Risk &amp; governance</span><div class="chips"><span class="chip">Data governance</span><span class="chip">Third-party data</span><span class="chip">Data quality</span><span class="chip">Risk &amp; compliance</span></div></div>
+          <div><span class="label">Data</span><div class="chips"><span class="chip">SQL</span><span class="chip">Python</span><span class="chip">BigQuery</span><span class="chip">Snowflake</span><span class="chip">Redshift</span><span class="chip">dbt</span><span class="chip">Kafka</span></div></div>
+          <div><span class="label">BI &amp; tools</span><div class="chips"><span class="chip">Tableau</span><span class="chip">Power BI</span><span class="chip">Looker</span><span class="chip">ThoughtSpot</span><span class="chip">Jira</span><span class="chip">Confluence</span></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="head"><h2>Education</h2></div>
+        <div class="edu">
+          <div><b>Master's, Embedded &amp; Wireless Systems</b><small>Maynooth University, Ireland · 2017–2018</small></div>
+          <div><b>B.E., Electronics &amp; Communication Engineering</b><small>Easwari Engineering College (Anna University) · 2013–2017</small></div>
+          <div><b>Advanced Data Analytics</b><small>IIT Kanpur &amp; Edvancer · 2024</small></div>
+          <div><b>Tableau Desktop Certified Professional</b><small>Tableau</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact spot" data-reveal>
+        <div>
+          <h2>Let's talk.</h2>
+          <p>Hiring for a business systems analyst, business analyst or product owner in fintech or data platforms? Email me, or connect on LinkedIn. My project code is on GitHub.</p>
+        </div>
+        <div class="actions">
+          <div class="email"><code id="email">adhir.17895@gmail.com</code><button class="btn" type="button" id="copy">Copy email</button></div>
+          <span class="toast" id="toast" role="status" aria-live="polite"></span>
+          <div class="cta" style="margin-top:0">
+            <a class="btn primary" href="Adhitya_Ramesh_Resume.pdf" target="_blank" rel="noopener" data-resume>Download resume</a>
+            <a class="btn" href="https://www.linkedin.com/in/adhitya-ramesh-a96914144" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="btn" href="https://github.com/adhuss17895" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><span>Adhitya Ramesh · Chennai, India</span><span>Updated November 2026</span></div>
+</footer>
+
+<script>
+(() => {
+  const RESUME = 'Adhitya_Ramesh_Resume.pdf';
+  const toast = document.getElementById('toast');
+  const say = (msg) => { toast.textContent = msg; setTimeout(() => { if (toast.textContent === msg) toast.textContent = ''; }, 3500); };
+  let downloads = null;
+  if (window.claude && window.claude.use) {
+    window.claude.use('downloads').then((d) => { downloads = d; }).catch(() => {});
+  }
+  async function getResume(ev) {
+    if (!downloads) return; // plain link opens the PDF
+    ev.preventDefault();
+    try {
+      const blob = await (await fetch(RESUME)).blob();
+      await downloads.save({ filename: RESUME, data: blob });
+      say('Resume saved');
+    } catch (e) {
+      if (!e || e.code !== 'declined') say('Could not save here. Opening the PDF instead.'), (location.href = RESUME);
+    }
+  }
+  document.querySelectorAll('[data-resume]').forEach((b) => b.addEventListener('click', getResume));
+  document.getElementById('copy').addEventListener('click', async () => {
+    const text = document.getElementById('email').textContent;
+    try { await navigator.clipboard.writeText(text); say('Email copied'); }
+    catch (e) {
+      const r = document.createRange(); r.selectNodeContents(document.getElementById('email'));
+      const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); say('Selected: press Ctrl+C to copy');
+    }
+  });
+})();
+</script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+  if (!reduce) root.classList.add('motion');
+  const css = (n) => getComputedStyle(root).getPropertyValue(n).trim();
+
+  // Headline words rise in sequence; the text is visible at every frame.
+  const h1 = document.querySelector('.hero h1');
+  const words = h1.textContent.split(' ');
+  h1.textContent = '';
+  words.forEach((w, i) => {
+    const sp = document.createElement('span'); sp.className = 'w'; sp.style.setProperty('--i', i); sp.textContent = w;
+    h1.append(sp, i < words.length - 1 ? ' ' : '');
+  });
+
+  // Reading progress bar.
+  const bar = document.getElementById('progress');
+  const onScroll = () => { const h = document.documentElement.scrollHeight - innerHeight; bar.style.transform = 'scaleX(' + (h > 0 ? scrollY / h : 0) + ')'; };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // Interactive trace: auto-advances, pauses while the pointer is over it, click or Enter pins a step.
+  const steps = [...document.querySelectorAll('.trace li')];
+  const DETAILS = ["Example: a long-running gap in customer-interaction data. I traced it back to the source system where the data was lost.", "I write what must change and where in the code, so engineering builds the right fix the first time.", "Before anything ships I list the downstream tables, reports and teams it touches, including how many historical records need reprocessing.", "I review engineering's UAT test cases and results against the acceptance criteria, and send back anything that misses.", "Release sign-off, then a clear status and risk update for leadership in the weekly review."];
+  const detail = document.getElementById('detail'), meter = document.getElementById('meter');
+  let cur = 0, paused = false;
+  function show(i) {
+    cur = i;
+    steps.forEach((li, j) => { li.classList.toggle('active', j === i); li.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+    const t = document.createElement('b');
+    t.textContent = String(i + 1).padStart(2, '0') + ' · ' + steps[i].querySelectorAll('b')[1].textContent;
+    detail.replaceChildren(t, document.createTextNode(DETAILS[i]));
+    meter.style.width = ((i + 1) / steps.length * 100) + '%';
+  }
+  steps.forEach((li, i) => {
+    li.tabIndex = 0; li.setAttribute('role', 'button');
+    li.addEventListener('click', () => { paused = true; show(i); });
+    li.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); paused = true; show(i); } });
+  });
+  const trace = document.querySelector('.trace');
+  trace.addEventListener('pointerenter', () => { paused = true; });
+  trace.addEventListener('pointerleave', () => { paused = false; });
+  show(0);
+  if (!reduce) setInterval(() => { if (!paused && !document.hidden) show((cur + 1) % steps.length); }, 3400);
+
+  // Count-up numbers; final values are already in the HTML.
+  function countUp(el) {
+    const end = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), t0 = performance.now(), dur = 1200;
+    const step = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = (end * e).toFixed(dec); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+
+  // Scroll reveals: content is visible at rest and only moves a few pixels as it arrives.
+  const items = [...document.querySelectorAll('[data-reveal]')];
+  if (!reduce && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in'); io.unobserve(e.target);
+      e.target.querySelectorAll('[data-count]').forEach(countUp);
+    }), { threshold: 0.15 });
+    items.forEach((el) => { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('in'); else io.observe(el); });
+  } else {
+    items.forEach((el) => el.classList.add('in'));
+  }
+
+  // Cursor spotlight on cards.
+  document.querySelectorAll('.spot').forEach((el) => el.addEventListener('pointermove', (e) => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+
+  // Hero canvas: transaction packets moving along dotted ledger lanes. Pauses off-screen.
+  const cv = document.getElementById('flow'), ctx = cv.getContext('2d');
+  let W = 0, H = 0, lanes = [], packets = [], running = false, raf = 0;
+  const spawn = (anywhere) => ({ lane: Math.floor(Math.random() * lanes.length), x: anywhere ? Math.random() * W : -30, v: 0.35 + Math.random() * 0.9, len: 10 + Math.random() * 28, hot: Math.random() < 0.14 });
+  function size() {
+    const r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+    W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.max(6, Math.round(H / 46));
+    lanes = Array.from({ length: n }, (_, i) => (i + 0.5) * H / n);
+    packets = Array.from({ length: Math.max(8, Math.round(W / 40)) }, () => spawn(true));
+  }
+  function draw() {
+    const line = css('--line'), accent = css('--accent');
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalAlpha = 0.6; ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.setLineDash([2, 8]);
+    lanes.forEach((y) => { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); });
+    ctx.setLineDash([]);
+    packets.forEach((p) => {
+      const y = lanes[p.lane];
+      ctx.globalAlpha = p.hot ? 0.85 : 0.7; ctx.strokeStyle = p.hot ? accent : line; ctx.lineWidth = p.hot ? 2 : 1.5;
+      ctx.beginPath(); ctx.moveTo(p.x - p.len, y); ctx.lineTo(p.x, y); ctx.stroke();
+      if (p.hot) { ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(p.x, y, 2.4, 0, Math.PI * 2); ctx.fill(); }
+    });
+    ctx.globalAlpha = 1;
+  }
+  function frame() {
+    packets.forEach((p, i) => { p.x += p.v; if (p.x - p.len > W) packets[i] = spawn(false); });
+    draw();
+    if (running) raf = requestAnimationFrame(frame);
+  }
+  const setRunning = (on) => { if (reduce) return; running = on; cancelAnimationFrame(raf); if (on) raf = requestAnimationFrame(frame); };
+  size(); draw();
+  addEventListener('resize', () => { size(); draw(); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  new MutationObserver(draw).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => setRunning(e.isIntersecting && !document.hidden)).observe(cv);
+  document.addEventListener('visibilitychange', () => setRunning(!document.hidden));
+})();
+</script>
+
+<script>
+(() => {
+  const chips = [...document.querySelectorAll('.fchip')];
+  const cards = [...document.querySelectorAll('#project-grid article')];
+  chips.forEach((chip) => chip.addEventListener('click', () => {
+    const f = chip.dataset.filter;
+    chips.forEach((c) => c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'));
+    cards.forEach((card) => {
+      const show = f === 'all' || card.dataset.cat.split(' ').includes(f);
+      card.hidden = !show;
+      card.classList.remove('pop');
+      if (show) { card.classList.add('in'); void card.offsetWidth; card.classList.add('pop'); }
+    });
+  }));
+})();
+</script>
+
+</body>
+</html>
